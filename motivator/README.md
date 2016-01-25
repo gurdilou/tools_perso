@@ -11,4 +11,5 @@ Pour l'utiliser, `npm install`, puis changer le fichier `config.ini`.
 
 ### Auteur
 Auteur : Thomas Luce
+
 Licence : Apache V2
