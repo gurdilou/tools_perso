@@ -1,0 +1,149 @@
+#!/bin/bash
+
+# Utilitu in order to save list of thing on a given directory
+# You must have writing rights on this directory
+# Each file/directory will be zipped
+
+
+varFile="variables.conf"
+cmdFile="commands.conf"
+currentDir=$(cd $(dirname "$0"); pwd)
+
+
+source $varFile
+
+debug=0
+if [ "$debug" -eq "1" ]; then
+    echo "back up directory : $backupDirectory"
+    echo "date format : $dateFormat"
+    echo "delete backups older than $deleteBackupsOlderThan days"
+fi
+
+### Variables
+backupDirTmp="/tmp/.backup"
+today=$(date +"%Y-%m-%d")
+
+
+### Functions
+# Test if a string is a valid date
+# return 0 if date valid, else 1
+isValidDate () {
+    date -d "$1" "+$dateFormat" >/dev/null 2>&1
+    res=$?
+    echo "$res"
+}
+
+# Time to timestamp
+date2stamp () {
+    date --utc --date "$1" +%s
+}
+
+# Calculte diff between 2 dates
+# http://www.unix.com/tips-and-tutorials/31944-simple-date-time-calulation-bash.html
+dateDiff () {
+    case $1 in
+        -s)   sec=1;      shift;;
+        -m)   sec=60;     shift;;
+        -h)   sec=3600;   shift;;
+        -d)   sec=86400;  shift;;
+        *)    sec=86400;;
+    esac
+    dte1=$(date2stamp $1)
+    dte2=$(date2stamp $2)
+    diffSec=$((dte2-dte1))
+    if ((diffSec < 0)); then abs=-1; else abs=1; fi
+    echo $((diffSec/sec*abs))
+}
+
+# Delete backups older than $deleteBackupsOlderThan
+cleanOldRecords () {
+    for f in $backupDirectory/* ; do
+        if [ -e $f ]; then
+            filenameBackup=$(basename "$f")
+            filenameBackup="${filenameBackup%.*}"
+            
+            dateValid=$(isValidDate $filenameBackup)
+            if [ $dateValid -eq 0 ]; then
+                diffDays=$(dateDiff -d $filenameBackup $today)
+                if [ $diffDays -gt $deleteBackupsOlderThan ]; then
+                    echo "Old backup $(basename "$f") will be deleteled..."
+                    rm -f "$f"
+                fi            
+                if [ $diffDays -eq 0 ];then
+                    echo "A backup already exists for today, deleting this one..."
+                    rm -f "$f"
+                fi
+            fi
+        fi
+    done
+}
+
+# Parse le fichier de commande à faire
+parseFilesToSave () {
+    while read line
+    do
+        if [[ ! $line =~ ^# ]]; then
+            IFS=';' read -a array <<< "$line"
+            case "${array[0]}" in
+                C)
+                    echo "Executing custom command..."
+                    eval ${array[1]}
+                    ;;
+                A)
+                    echo "Adding ${array[1]} to backup..."
+                    if [ -d "${array[1]}" ]; then
+                        cd ${array[1]}
+                        tar -zcf "$backupDirTmp/${array[2]}.tgz" "."
+                        cd - > /dev/null
+                    else
+                        dir=$(dirname "${array[1]}");
+                        cd "$dir"
+                        filename=$(basename "${array[1]}")
+                        tar -zcf "$backupDirTmp/${array[2]}.tgz" "$filename"
+                        cd -
+                    fi
+                    ;;
+            esac
+        fi
+    done < $cmdFile 
+}
+
+
+### main function
+if [ ! -d "$backupDirTmp" ]; then
+    mkdir "$backupDirTmp"
+fi
+rm -rf $backupDirTmp/*
+
+if [ ! -d "$backupDirectory" ]; then
+    mkdir -p $backupDirectory			
+fi
+
+
+
+cleanOldRecords
+parseFilesToSave
+
+
+
+cd $backupDirTmp
+if [ ! -d ".tmp" ]; then
+    mkdir ".tmp"
+fi
+
+find . -name '*.tgz' > .tmp/files
+
+#Building list files to add
+listFiles=""
+while read line
+do
+    listFiles="$listFiles $line"
+
+done < .tmp/files 
+
+tar -zcf "$backupDirectory/$today.tgz" $listFiles
+
+cd $currentDir
+rm -rf $backupDirTmp
+
+exit 0
