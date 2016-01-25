@@ -146,14 +146,14 @@ function sendThreatMail(nbDays) {
     subject: 'Still alive ?!', 
     text:
       "Salut le blogger, \n"
-      +"Tu n'as pas été très actif dérnièrement ("+nbDays+" jour(s))... Bouges toi ! "
+      +"Tu n'as pas été très actif dérnièrement ("+nbDays+" jour(s))... Bouges-toi ! "
       +"Bisous,\n"
       +"Motivator",
     html: 
       "<h2>Salut le blogger,</h2>"
       +"<div>"
-      +"<div>"
-        +"Tu n'as pas été très actif dérnièrement ("+nbDays+" jour(s))... Bouges toi ! "
+      +"<div style='margin-bottom: 20px'>"
+        +"Tu n'as pas été très actif dérnièrement ("+nbDays+" jour(s))... Bouges-toi ! "
       +"</div>"
       +"<div>"
         +"Bisous,<br/>Motivator"
