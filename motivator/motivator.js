@@ -144,10 +144,8 @@ function sendThreatMail(nbDays) {
 
   var res = request('GET', 'http://quotes.rest/qod.json');
   var quoteJson = JSON.parse(res.getBody('utf8'));
-  // var quote = quoteJson.contents.quotes[0].quote;
-  // var quoteAutor = quoteJson.contents.quotes[0].author;
-  var quote ='aa';
-  var quoteAutor = 'zz';
+  var quote = quoteJson.contents.quotes[0].quote;
+  var quoteAutor = quoteJson.contents.quotes[0].author;
   // console.log("quote : "+quote);
   // console.log("By: "+quoteAutor);
 
@@ -190,7 +188,7 @@ function sendThreatMail(nbDays) {
            <tr>\
              <td>\
                <div style='color : #516D7B; align : left; margin-left : 72px; margin-right : 72px; height : 100%; border-radius : 20px 20px 0 0;border : 1px solid #2C4D5E; border-bottom : none; background: #FFFCFC; padding-bottom : 20px;'>\
-                  <div style='padding : 12px; font-size : 14px; font-family : 'Lucida Console', Monaco, monospace'>\
+                  <div style='padding : 12px; font-size : 14px; font-family : \"Lucida Console\", Monaco, monospace'>\
                     "+quote+"\
                   </div>\
                </div>\
@@ -232,7 +230,7 @@ function sendThreatMail(nbDays) {
               </td>\
            </tr>\
          </tbody>\
-       </table> ";
+       </table> ",
   };
 
   // send mail with defined transport object
