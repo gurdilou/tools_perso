@@ -8,6 +8,10 @@ Fonctionne avec un blog [Hexo](https://hexo.io/).
 
 Pour l'utiliser, `npm install`, puis changer le fichier `config.ini`.
 
+### Resultat
+
+![Image of mail sent](https://github.com/gurdilou/tools_perso/tree/master/motivator/mail_example.png)
+
 
 ### Auteur
 Auteur : Thomas Luce
