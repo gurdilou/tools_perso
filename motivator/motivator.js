@@ -3,6 +3,7 @@ var path = require('path');
 var process = require("process");
 var nodemailer = require('nodemailer');
 var ini = require('ini');
+var request = require('sync-request');
 
 // =================================================================== VARIABLES
 var config = ini.parse(fs.readFileSync('./config.ini', 'utf-8'));
@@ -20,6 +21,7 @@ var config_mail = {
       secure: config.config_mail.secure
     }
   };
+
 
 // ======================================================================== MAIN
 var date_last_post;
@@ -57,7 +59,7 @@ fs.readdir(blog_posts_location, function(err, files) {
 // =================================================================== FUNCTIONS
 // processFile : Lit un fichier et extrait
 function processFile(filepath) {
-  console.log("Processing '%s'", filepath);
+  // console.log("Processing '%s'", filepath);
 
   var data = fs.readFileSync(filepath, 'utf8', function(err) {
     if (err) {
@@ -140,6 +142,13 @@ function getDaysOff() {
 function sendThreatMail(nbDays) {
   var transporter = nodemailer.createTransport(config_mail);
 
+  var res = request('GET', 'http://quotes.rest/qod.json');
+  var quoteJson = JSON.parse(res.getBody('utf8'));
+  var quote = quoteJson.contents.quotes[0].quote;
+  var quoteAutor = quoteJson.contents.quotes[0].author;
+  // console.log("quote : "+quote);
+  // console.log("By: "+quoteAutor);
+
   var mailOptions = {
     from: 'Motivator <'+config_mail.auth.user+'>', 
     to: mail_blogger, 
@@ -150,15 +159,78 @@ function sendThreatMail(nbDays) {
       +"Bisous,\n"
       +"Motivator",
     html: 
-      "<h2>Salut le blogger,</h2>"
-      +"<div>"
-      +"<div style='margin-bottom: 20px'>"
-        +"Tu n'as pas été très actif dérnièrement ("+nbDays+" jour(s))... Bouges-toi ! "
-      +"</div>"
-      +"<div>"
-        +"Bisous,<br/>Motivator"
-      +"</div>"
-      +"</div>"
+      "<table style='width : 50%; margin-left : 25%; margin-right : 25%; background : #F3ECED; border-radius : 9px; font-family : Verdana, Geneva, sans-serif;' cellspacing='0' cellpadding='0'> 
+         <tbody>
+           <tr>
+              <td style='background-color: #E16565; border-radius : 9px; height : 100px;'>
+                <div style='color : white; font-size : 32px; font-weight : bold; margin-left : 20px'>
+                  Hey ! 
+                </div>
+              </td>
+           </tr>
+           <tr>
+             <td><h2 style='color : #2C4D5E; margin-left : 32px;'>Salut le blogger,</h2></td>
+           </tr>
+           <tr>
+              <td style='color : #516D7B;'>
+                <div style='margin-left : 40px; margin-bottom : 32px;'>
+                  Tu n'as pas été très actif dernièrement ("+nbDays+" jour(s))... Bouges-toi ! 
+                </div>
+              </td>
+           </tr>   
+           <tr>
+              <td style='color : #516D7B;'>
+                <div style='margin-left : 40px; margin-bottom : 22px;'>
+                  Comme tu manques d'inspiration voici une citation d'un homme qui était motivé : 
+                </div>
+              </td>
+           </tr> 
+           <tr>
+             <td>
+               <div style='color : #516D7B; align : left; margin-left : 72px; margin-right : 72px; height : 100%; border-radius : 20px 20px 0 0;border : 1px solid #2C4D5E; border-bottom : none; background: #FFFCFC; padding-bottom : 20px;'>
+                  <div style='padding : 12px; font-size : 14px; font-family : 'Lucida Console', Monaco, monospace'>
+                    "+quote+"
+                  </div>
+               </div>
+             </td>
+           </tr>    
+           <tr>
+              <td>
+                 <div style='color : #516D7B; margin-left : 72px; margin-right : 72px; border : 1px solid #2C4D5E; border-top : none; border-bottom : none; background: #FFFCFC' align='right'>
+                  <span style='margin-right : 20px; font-size : 14px;'>"+quoteAutor+"</span>
+                 </div>
+              </td>
+           </tr>
+           <tr>
+              <td>
+               <div style='color : #516D7B; margin-left : 72px; margin-right : 72px; border-radius : 0 0 20px 20px;border : 1px solid #2C4D5E; border-top : none; background: #FFFCFC; margin-bottom : 42px; padding-bottom : 12px;' align='right'>
+                <span style='z-index:50;font-size:12px; margin-right : 20px; '><img src='https://theysaidso.com/branding/theysaidso.png' height='12' width='12' alt='theysaidso.com'/><a href='https://theysaidso.com' title='Powered by quotes from theysaidso.com' style='color: #516D7B; margin-left: 4px; vertical-align: middle;'>theysaidso.com</a></span>
+               </div>
+              </td>
+           </tr>
+           <tr>
+              <td style='color : #516D7B;'>
+                <div style='margin-left : 40px;'>
+                  Bisous,
+                </div>
+              </td>
+           </tr>   
+           <tr>
+              <td style='color : #2C4D5E;'>
+                <div style='margin-left: 40px; margin-bottom : 32px; font-weight : bold;'>
+                  Motivator
+                </div>
+              </td>
+           </tr>   
+           <tr>
+              <td style='background-color: #E16565; border-radius : 6px; height : 20px;' align='right'>
+                <div style='color : white; font-size : 10px; margin-right : 12px;'>
+                  Je te surveille...
+                </div>
+              </td>
+           </tr>
+         </tbody>
+       </table> ";
   };
 
   // send mail with defined transport object
