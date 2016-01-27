@@ -1,0 +1,29 @@
+*.class
+
+# Package Files #
+*.jar
+*.war
+
+# gwt caches and compiled units #
+gwt-unitCache/
+
+
+
+# more caches and things from deploy #
+war/WEB-INF/deploy/
+war/WEB-INF/classes/
+
+#compilation logs
+.gwt/
+.settings/
+
+#caching for already compiled files
+gwt-unitCache/
+*.cache.js
+*.nocache.js
+
+#gwt junit compilation files
+test-classes/
+
+#old GWT (1.5) created this dir
+.gwt-tmp/

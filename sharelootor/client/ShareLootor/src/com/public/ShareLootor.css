@@ -1,0 +1,19 @@
+.gwt-DialogBox {
+  width: 400px;
+}
+
+.dialogVPanel {
+  margin: 5px;
+}
+
+.errorLabel{
+  font-weight   : bold;
+  color         : #D22020;
+}
+
+.errorBox{
+  border-top-color    : #D22020;
+  border-left-color   : #D22020;
+  border-right-color  : #F0BCB9;
+  border-bottom-color : #F0BCB9;
+}
