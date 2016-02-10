@@ -8,6 +8,10 @@ Fonctionne avec un blog [Hexo](https://hexo.io/).
 
 Pour l'utiliser, `npm install`, puis changer le fichier `config.ini`.
 
+### Resultat
+
+![Image of mail sent](mail_example.png)
+
 
 ### Auteur
 Auteur : Thomas Luce

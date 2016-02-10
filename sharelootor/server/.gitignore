@@ -1,0 +1,6 @@
+/node_modules
+public/*
+dbs/*
+/log
+/tmp
+mailUtils-perso.js
