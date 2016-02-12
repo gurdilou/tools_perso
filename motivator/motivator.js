@@ -159,7 +159,7 @@ function sendThreatMail(nbDays) {
       +"Bisous,\n"
       +"Motivator",
     html: 
-      "<table style='width : 80%; margin-left : 10%; margin-right : 10%; background : #F3ECED; border-radius : 9px; font-family : Verdana, Geneva, sans-serif;' cellspacing='0' cellpadding='0'> \
+      "<table style='width : 96%; margin-left : 2%; margin-right : 2%; background : #F3ECED; border-radius : 9px; font-family : Verdana, Geneva, sans-serif;' cellspacing='0' cellpadding='0'> \
          <tbody>\
            <tr>\
               <td style='background-color: #E16565; border-radius : 9px; height : 100px;'>\
